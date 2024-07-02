@@ -1,0 +1,128 @@
+HMR: hot module replacement
+
+Building Components
+-Building componments
+-Rendering markup with JSX
+-Managing state
+-Passing input via props
+-Debugging React apps
+
+ctrl + d :多重选择，批量修改
+
+function ListGroup() {
+  let items = ["City A", "City B", "City C", "City D"];
+  items = [];
+
+  //   const getMessage = () => {
+  //     items.length === 0 ? <p>No item found</p> : null;
+  //   };
+  return (
+    <>
+      <h1>List</h1>
+      {/* {getMessage} */}
+      {/* {items.length === 0 ? <p>No item found</p> : null} */}
+      {items.length === 0 && <p>No item found</p>}
+      <ul className='list-group'>
+        {items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+export default ListGroup;
+
+
+
+import { MouseEvent } from "react";
+
+function ListGroup() {
+  let items = ["City A", "City B", "City C", "City D"];
+  let selectedIndex = 0;
+
+  // event handler
+  const handleClick = (event: MouseEvent) => console.log(event);
+
+  return (
+    <>
+      <h1>List</h1>
+      {items.length === 0 && <p>No item found</p>}
+      <ul className='list-group'>
+        {items.map((item, index) => (
+          <li
+            className={
+              selectedIndex === index
+                ? "list-group-item active"
+                : "list-group-item"
+            }
+            key={item}
+            onClick={handleClick}>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+export default ListGroup;
+
+
+
+// Hook
+  const arr = useState(-1);
+  arr[0]// variable(selectedIndex)
+  arr[1]// updater function
+
+const [selectedIndex, setSelectedIndex] = useState(-1);
+
+
+App.tsx(ListGroup)
+import ListGroup from "./componments/ListGroup";
+
+function App() {
+  let items = ["City A", "City B", "City C", "City D"];
+
+  const handleSelectItem = (item: string) => {
+    console.log(item);
+  };
+
+  return (
+    <div>
+      <ListGroup
+        items={items}
+        heading='Cities'
+        onSelectItem={handleSelectItem}
+      />
+    </div>
+  );
+}
+
+export default App;
+
+
+rafce
+
+App.tsx(Button)
+import Button from "./componments/Button";
+
+function App() {
+  return (
+    <div>
+      <Button onClick={() => console.log("Clicked")}>My Button</Button>
+    </div>
+  );
+}
+
+export default App;
+
+
+
+import "bootstrap/dist/css/bootstrap.css";
+
+return (
+    <div>
+      <Like onClick={() => console.log("Clicked")} />
+    </div>
+  );

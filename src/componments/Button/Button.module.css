@@ -1,0 +1,15 @@
+.btn {
+  padding: 12px 16px;
+  border-radius: 4px;
+  border: 0;
+}
+
+.btn-primary {
+  background-color: antiquewhite;
+  color: rgb(5, 21, 21);
+}
+
+.btn-secondary {
+  background-color: brown;
+  color: rgb(5, 21, 21);
+}
