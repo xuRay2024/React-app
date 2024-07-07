@@ -126,3 +126,234 @@ return (
       <Like onClick={() => console.log("Clicked")} />
     </div>
   );
+
+
+const [isVisable, setVisibility] = useState(false);
+  
+  const handleClick = () => {
+    setVisibility(true);
+    console.log(isVisable);
+  };
+
+  return (
+    <div>
+      <button onClick={handleClick}>Show</button>
+    </div>
+  );
+
+
+Choosing the State Structure
+function App() {
+  // const [firstName,setFirstName]=useState('');
+  // const[lastName,setLastName]=useState('');
+  const [person, setPerson] = useState({
+    firstName: "",
+    lastName: "",
+  });
+
+  const [isLoading, setLoading] = useState("false");
+
+  return <div></div>;
+}
+
+
+Strict Mode
+return (
+    <div>
+      <Message />
+    </div>
+  );
+
+
+Update Objects
+  const [drink, setDrink] = useState({
+    title: "Sprite",
+    price: 5,
+  });
+
+  const handleClick = () => {
+    // const newDrink = {
+    //   title: drink.title,
+    //   price: 6,
+    // };
+    setDrink({ ...drink, price: 6 });
+  };
+
+  return (
+    <div>
+      {drink.price}
+      <button onClick={handleClick}>Click Here</button>
+    </div>
+  );
+
+Updating Nested Objects
+  const [customer, setCustomer] = useState({
+    name: "Ray",
+    address: {
+      city: "ABBA",
+      zipCode: 95021,
+    },
+  });
+
+  const handleClick = () => {
+    setCustomer({
+      ...customer,
+      address: { ...customer.address, zipCode: 94112 },
+    });
+  };
+
+
+Updating Arrays
+  const [tags, setTags] = useState(["happy", "sad"]);
+
+  const handleClick = () => {
+    //Add
+    setTags([...tags, "exciting"]);
+
+    //Remove
+    setTags(tags.filter((tag) => tag !== "happy"));
+
+    //Update
+    setTags(tags.map((tag) => (tag === "happy" ? "happiness" : tag)));
+  };
+
+
+Updating Array of Objects
+  const [bugs, setBugs] = useState([
+    { id: 1, title: "Bug 1", fixed: false },
+    { id: 2, title: "Bug 2", fixed: false },
+  ]);
+
+  const handleClick = () => {
+    //setBugs(bugs.map((bug) => (bug.id === 1 ? { ...bug, fixed: true } : bug)));
+  };
+
+    setBugs(
+      produce((draft) => {
+        const bug = draft.find((bug) => bug.id === 1);
+        if (bug) bug.fixed = true;
+      })
+    );
+
+
+Sharing State between Components
+  const [cartItems, setCartItems] = useState(["Product1", "Product2"]);
+
+  return (
+    <div>
+      <NavBar cartItemsCount={cartItems.length} />
+      <Cart cartItems={cartItems} onClear={() => setCartItems([])} />
+    </div>
+  );
+
+
+
+Exercise 3
+function App() {
+  const [cart, setCart] = useState({
+    discount: 0.1,
+    items: [
+      { id: 1, title: "Product 1", quantity: 1 },
+      { id: 2, title: "Product 2", quantity: 1 },
+    ],
+  });
+
+  const handleClick = () => {
+    setCart({
+      ...cart,
+      items: cart.items.map((item) =>
+        item.id === 1 ? { ...item, quantity: item.quantity + 1 } : item
+      ),
+    });
+  };
+
+  return (
+    <div>
+      <button onClick={handleClick}>Click Here</button>
+    </div>
+  );
+}
+
+
+Exercise 1
+function App() {
+  const [game, setGame] = useState({
+    id: 1,
+    player: {
+      name: "Ray",
+    },
+  });
+
+  const handleClick = () => {
+    setGame({ ...game, player: { ...game.player, name: "BOb" } });
+  };
+
+  return (
+    <div>
+      <button onClick={handleClick}>Click Here</button>
+    </div>
+  );
+}
+
+
+Exercise 2
+const [pizza, SetPizza] = useState({
+    name: "Spicy",
+    toppings: ["Mushroom"],
+  });
+
+  const handleClick = () => {
+    SetPizza({ ...pizza, toppings: [...pizza.toppings, "Cheese"] });
+  };
+
+  return (
+    <div>
+      <button onClick={handleClick}>Click Here</button>
+    </div>
+  );
+
+
+
+Exercise 3
+function App() {
+  const [cart, setCart] = useState({
+    discount: 0.1,
+    items: [
+      { id: 1, title: "Product 1", quantity: 1 },
+      { id: 2, title: "Product 2", quantity: 1 },
+    ],
+  });
+
+  const handleClick = () => {
+    setCart({
+      ...cart,
+      items: cart.items.map((item) =>
+        item.id === 1 ? { ...item, quantity: item.quantity + 1 } : item
+      ),
+    });
+  };
+
+  return (
+    <div>
+      <button onClick={handleClick}>Click Here</button>
+    </div>
+  );
+}
+
+
+
+Exercise 4
+function App() {
+  const handleClick = () => {};
+
+  return (
+    <div>
+      <ExpandTexts>
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eaque,
+        voluptatibus amet. Hic excepturi quidem ut voluptatem asperiores
+        delectus soluta quam, autem, modi rem dolore! Nostrum id laborum labore
+        doloremque itaque.
+      </ExpandTexts>
+    </div>
+  );
+}
