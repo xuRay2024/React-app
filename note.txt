@@ -642,3 +642,370 @@ function App() {
 }
 
 export default App;
+
+
+
+CH6 Project Expense Tracker
+function App() {
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [expenses01, setExpenses] = useState([
+    { id: 1, description: "aa", amount: 6, category: "Unknown" },
+    { id: 2, description: "bb", amount: 7, category: "Unknown" },
+    { id: 3, description: "cc", amount: 8, category: "Unknown" },
+    { id: 4, description: "dd", amount: 9, category: "Unknown" },
+  ]);
+
+  const visibleExpenses = selectedCategory
+    ? expenses01.filter((e) => e.category === selectedCategory)
+    : expenses01;
+
+  return (
+    <>
+      <div>
+        <div className='mb-5'>
+          <ExpenseForm
+            onSubmit={(newexpense) =>
+              setExpenses([
+                ...expenses01,
+                { ...newexpense, id: expenses01.length + 1 },
+              ])
+            }
+          />
+        </div>
+        <div className='mb-3'>
+          <ExpenseFilter
+            onSelectCategory={(category) => setSelectedCategory(category)}
+          />
+        </div>
+        <ExpenseList
+          expenses={visibleExpenses}
+          onDelete={(id) => setExpenses(expenses01.filter((e) => e.id !== id))}
+        />
+      </div>
+    </>
+  );
+}
+
+export default App;
+
+
+CH7-2 Effect Hook
+function App() {
+  const ref = useRef<HTMLInputElement>(null);
+
+  //afterRender
+  useEffect(() => {
+    //Side effect
+    if (ref.current) ref.current.focus();
+  });
+
+  useEffect(() => {
+    document.title = "My App";
+  });
+
+  return (
+    <div>
+      <input ref={ref} type='text' className='from-control' />
+    </div>
+  );
+}
+
+export default App;
+
+
+CH7-3 Effect Dependencies
+function App() {
+  const [category, setCategory] = useState("");
+
+  return (
+    <div>
+      <select
+        className='form-select'
+        onChange={(event) => setCategory(event.target.value)}>
+        <option value=''></option>
+        <option value='Clothing'>Clothing</option>
+        <option value='Household'>Household</option>
+      </select>
+      <ProductList category={category} />
+    </div>
+  );
+}
+
+export default App;
+
+
+CH7-4 Effect ciean up
+const connect = () => console.log("Connecting");
+const disconnect = () => console.log("Disconnecting");
+
+function App() {
+  useEffect(() => {
+    connect();
+
+    return () => disconnect();
+  });
+
+  return <div></div>;
+}
+
+export default App;
+
+
+CH7-5 Fetching Data
+interface Persons {
+  id: number;
+  name: string;
+}
+
+function App() {
+  const [person, setPersons] = useState<Persons[]>([]);
+
+  useEffect(() => {
+    axios
+      .get<Persons[]>("https://jsonplaceholder.typicode.com/users")
+      .then((res) => setPersons(res.data));
+  }, []);
+
+  return (
+    <ul>
+      {person.map((user) => (
+        <li key={user.id}>{user.name}</li>
+      ))}
+    </ul>
+  );
+}
+
+export default App;
+
+
+CH7-7 Handing Errors
+interface Persons {
+  id: number;
+  name: string;
+}
+
+function App() {
+  const [person, setPersons] = useState<Persons[]>([]);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    axios
+      .get<Persons[]>("https://jsonplaceholder.typicode.com/users")
+      .then((res) => setPersons(res.data))
+      .catch((err) => setError(err.message));
+  }, []);
+
+  return (
+    <>
+      {error && <p className='text-danger'>{error}</p>}
+      <ul>
+        {person.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+export default App;
+
+
+CH7-8Working with Async and Await
+interface Persons {
+  id: number;
+  name: string;
+}
+
+function App() {
+  const [person, setPersons] = useState<Persons[]>([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchPersons = async () => {
+      try {
+        const res = await axios.get<Persons[]>(
+          "https://jsonplaceholder.typicode.com/users"
+        );
+        setPersons(res.data);
+      } catch (err) {
+        setError((err as AxiosError).message);
+      }
+    };
+
+    fetchPersons();
+
+    //get -> await promise -> res/err
+    // .then((res) => setPersons(res.data))
+    // .catch((err) => setError(err.message));
+  }, []);
+
+  return (
+    <>
+      {error && <p className='text-danger'>{error}</p>}
+      <ul>
+        {person.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+export default App;
+
+
+
+CH7-9/10 Cancelling a Fetch Request / Showing a LOading Indicator
+interface Persons {
+  id: number;
+  name: string;
+}
+
+function App() {
+  const [person, setPersons] = useState<Persons[]>([]);
+  const [error, setError] = useState("");
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    axios
+      .get<Persons[]>("https://jsonplaceholder.typicode.com/users", {
+        signal: controller.signal,
+      })
+      .then((res) => {
+        setPersons(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (err instanceof CanceledError) return;
+        setError(err.message);
+        setLoading(false);
+      });
+
+    // .finally(() => {
+    //   setLoading(false);
+    // });
+
+    return () => controller.abort();
+  }, []);
+
+  return (
+    <>
+      {error && <p className='text-danger'>{error}</p>}
+      {isLoading && <div className='spinner-border'></div>}
+      <ul>
+        {person.map((user) => (
+          <li key={user.id}>{user.name}</li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+export default App;
+
+
+
+CH11-14
+interface Persons {
+  id: number;
+  name: string;
+}
+
+function App() {
+  const [person, setPersons] = useState<Persons[]>([]);
+  const [error, setError] = useState("");
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    apiClient
+      .get<Persons[]>("/users", {
+        signal: controller.signal,
+      })
+      .then((res) => {
+        setPersons(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (err instanceof CanceledError) return;
+        setError(err.message);
+        setLoading(false);
+      });
+
+    // .finally(() => {
+    //   setLoading(false);
+    // });
+
+    return () => controller.abort();
+  }, []);
+
+  const deleteUser = (user: Persons) => {
+    const originalUsers = [...person];
+    setPersons(person.filter((u) => u.id !== user.id));
+
+    apiClient.delete("/users/" + user.id).catch((err) => {
+      setError(err.message);
+      setPersons(originalUsers);
+    });
+  };
+
+  const addUser = () => {
+    const originalUsers = [...person];
+    const newUser = { id: 0, name: "Ray" };
+    setPersons([newUser, ...person]);
+
+    apiClient
+      .post("/users", newUser)
+      .then(({ data: savedUser }) => setPersons([savedUser, ...person]))
+      .catch((err) => {
+        setError(err.message);
+        setPersons(originalUsers);
+      });
+  };
+
+  const updateUsers = (user: Persons) => {
+    const originalUsers = [...person];
+    const updateUser = { ...user, name: user.name + "!" };
+    setPersons(person.map((u) => (u.id === user.id ? updateUser : u)));
+
+    apiClient.patch("/users/" + user.id, updateUser).catch((err) => {
+      setError(err.message);
+      setPersons(originalUsers);
+    });
+  };
+
+  return (
+    <>
+      {error && <p className='text-danger'>{error}</p>}
+      {isLoading && <div className='spinner-border'></div>}
+      <button className='btn btn-primary mb-3' onClick={addUser}>
+        Add
+      </button>
+      <ul className='list-group'>
+        {person.map((user) => (
+          <li
+            key={user.id}
+            className='list-group-item d-flex justify-content-between'>
+            {user.name}
+            <div>
+              <button
+                className='btn btn-outline-secondary mx-1'
+                onClick={() => updateUsers(user)}>
+                Update
+              </button>
+              <button
+                className='btn btn-outline-danger'
+                onClick={() => deleteUser(user)}>
+                Delete
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+export default App;
