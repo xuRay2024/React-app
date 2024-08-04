@@ -1,0 +1,17 @@
+
+插值
+function App() {
+  const content = "内容";
+  const Title = "标题";
+
+  return <div title={Title}>{content}</div>;
+}
+
+export default App;
+
+条件渲染
+
+
+
+
+
